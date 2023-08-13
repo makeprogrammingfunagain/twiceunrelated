@@ -21,12 +21,18 @@ def generate_response(input_text):
 
     """
     prompt = f"{dedent(prompt_prefix)}\n{input_text}"
-    st.info(llm(prompt))
+    response = llm(prompt)
+    parsed = response.split("\n", 1)
+    relation = parsed[0].strip()
+    relation = "".join(e for e in relation if e.isalnum())
+    body = parsed[1].strip()
+    st.info(f"{relation}")
+    st.info(f"{body}")
 
 with st.form("my_form"):
     text = st.text_input("Enter two unrelated things:", value="loretz attractors and flatworms", max_chars=80)
     submitted = st.form_submit_button("Submit")
     if not openai_api_key.startswith("sk-"):
-        st.warning("Enter your OpenAI API key", icon="⚠")
+        st.warning("Enter your OpenAI API key in the sidebar", icon="⚠")
     if submitted and openai_api_key.startswith("sk-"):
         generate_response(text)
